@@ -1,0 +1,10 @@
+div.testimonial-card {
+width: auto;
+height: 400px;
+background-color: #FFFFFF;
+display: flex;
+flex-direction: column;
+justify-content: space-around;
+padding: 30px;
+border-radius: 20px;
+}
