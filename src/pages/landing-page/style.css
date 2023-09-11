@@ -1,3 +1,26 @@
 section.hero-section {
     background-color: #495E57; 
 }
+
+div.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 30px;
+    /* padding: 10px; */
+  }
+
+section.testimonials {
+    margin: 2rem 0;
+    padding: 5rem;
+    background-color: #495E57; 
+}  
+
+section > h1 {
+    text-align: center;
+}
+
+section > div {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 30px;
+}
