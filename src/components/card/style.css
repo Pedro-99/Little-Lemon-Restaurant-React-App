@@ -1,0 +1,12 @@
+div.card {
+width: auto;
+height: 600px;
+background-color: #FFFFFF;
+display: flex;
+justify-content: space-between;
+border-radius: 20px;
+}
+
+div.card > img {
+    border-radius: 20px;
+}
