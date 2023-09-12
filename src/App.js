@@ -1,5 +1,5 @@
 import './App.css';
-import BookingPage from './pages/booking';
+import BookingPage from './pages/BookingPage';
 import LandingPage from './pages/landing-page';
 import { Route, Routes } from "react-router-dom"
 
