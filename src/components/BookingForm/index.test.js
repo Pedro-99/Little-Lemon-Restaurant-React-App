@@ -1,70 +1,60 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import BookingForm from "./index";
+import React from 'react';
+import { render, fireEvent, screen } from '@testing-library/react';
+import BookingForm from './index';
 
-// Mock the submit function for testing
-const mockSubmit = jest.fn();
+describe('BookingForm', () => {
+  // Mock props for the component
+  const mockProps = {
+    booking: {},
+    handleChange: jest.fn(),
+    availableTimes: ['10:00 AM', '12:00 PM', '2:00 PM'],
+    dispatchTimes: jest.fn(),
+    setBookingForm: jest.fn(),
+  };
 
-// Define initial booking data for testing
-const initialBooking = {
-  date: "2023-09-13",
-  time: "17:00",
-  numberOfGuests: 2,
-  occasion: "Birthday",
-};
+  it('renders BookingForm component with form fields', () => {
+    render(<BookingForm {...mockProps} />);
 
-test("Renders the BookingForm heading", () => {
-  render(<BookingForm />);
-  const headingElement = screen.getByText("Book Now");
-  expect(headingElement).toBeInTheDocument();
-});
+    // Check if form fields are rendered
+    expect(screen.getByLabelText('Choose date')).toBeInTheDocument();
+    expect(screen.getByLabelText('Choose time')).toBeInTheDocument();
+    expect(screen.getByLabelText('Number of guests')).toBeInTheDocument();
+    expect(screen.getByLabelText('Occasion')).toBeInTheDocument();
+    expect(screen.getByText('Make Your reservation')).toBeInTheDocument();
+  });
 
-test("Renders and updates booking inputs", () => {
-  render(<BookingForm booking={initialBooking} handleChange={mockSubmit} />);
+  it('handles form input changes', () => {
+    render(<BookingForm {...mockProps} />);
 
-  // Check if the date input renders and updates correctly
-  const dateInput = screen.getByLabelText("Choose date");
-  expect(dateInput).toBeInTheDocument();
-  fireEvent.change(dateInput, { target: { value: "2023-09-14" } });
-  expect(mockSubmit).toHaveBeenCalledTimes(1); // Ensure handleChange is called
+    // Simulate user input
+    fireEvent.change(screen.getByLabelText('Choose date'), {
+      target: { value: '2023-09-15' },
+    });
+    fireEvent.change(screen.getByLabelText('Choose time'), {
+      target: { value: '10:00 AM' },
+    });
+    fireEvent.change(screen.getByLabelText('Number of guests'), {
+      target: { value: '2' },
+    });
+    fireEvent.change(screen.getByLabelText('Occasion'), {
+      target: { value: 'Anniversary' },
+    });
 
-  // Similarly, you can add tests for other input fields (time, numberOfGuests, occasion)
+    // Check if input values are updated
+    expect(screen.getByLabelText('Choose date')).toHaveValue('2023-09-15');
+    expect(screen.getByLabelText('Choose time')).toHaveValue('10:00 AM');
+    expect(screen.getByLabelText('Occasion')).toHaveValue('Anniversary');
+  });
 
-  // Check if the time select input renders and updates correctly
-  const timeSelect = screen.getByLabelText("Choose time");
-  expect(timeSelect).toBeInTheDocument();
-  fireEvent.change(timeSelect, { target: { value: "18:00" } });
-  expect(mockSubmit).toHaveBeenCalledTimes(2);
+  it('displays validation errors', async () => {
+    render(<BookingForm {...mockProps} />);
 
-  // Check if the numberOfGuests input renders and updates correctly
-  const guestsInput = screen.getByLabelText("Number of guests");
-  expect(guestsInput).toBeInTheDocument();
-  fireEvent.change(guestsInput, { target: { value: "4" } });
-  expect(mockSubmit).toHaveBeenCalledTimes(3);
+    // Submit the form without filling in required fields
+    fireEvent.click(screen.getByText('Make Your reservation'));
 
-  // Check if the occasion select input renders and updates correctly
-  const occasionSelect = screen.getByLabelText("Occasion");
-  expect(occasionSelect).toBeInTheDocument();
-  fireEvent.change(occasionSelect, { target: { value: "Anniversary" } });
-  expect(mockSubmit).toHaveBeenCalledTimes(4);
-});
+    // Check if validation error messages are displayed
+    expect(await screen.findByText('Date is required')).toBeInTheDocument();
+    expect(await screen.findByText('Time is required')).toBeInTheDocument();
 
-test("Renders available times in the select input", () => {
-  // Provide availableTimes data for testing
-  const availableTimes = ["17:00", "18:00", "19:00"];
-  render(
-    <BookingForm
-      booking={initialBooking}
-      availableTimes={availableTimes}
-      handleChange={mockSubmit}
-    />
-  );
-
-  // Check if the available times are rendered in the select input
-  const timeSelect = screen.getByLabelText("Choose time");
-  expect(timeSelect).toBeInTheDocument();
-
-  availableTimes.forEach((time) => {
-    expect(screen.getByText(time)).toBeInTheDocument();
   });
 });
