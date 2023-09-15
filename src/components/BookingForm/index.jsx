@@ -1,7 +1,21 @@
-
+import React, { useState, useEffect } from 'react';
 
 export default function BookingForm(props) {
-    const { booking, handleChange, availableTimes } = props;
+    const { booking, handleChange, availableTimes, dispatchTimes, setBookingForm } = props;
+    const [isAvailable, setIsAvailable] = useState(true);
+
+    // Use useEffect to monitor changes in availableTimes
+    useEffect(() => {
+        // Check if availableTimes is empty (no available times for the selected date)
+        if (availableTimes.length === 0) {
+            setIsAvailable(false);
+        } else {
+            setIsAvailable(true);
+        }
+    }, [availableTimes]);
+
+
+
     return (
         <>
             <div className="d-flex justify-content-center m-5">
@@ -16,21 +30,29 @@ export default function BookingForm(props) {
                     id="res-date"
                     name="date"
                     value={booking?.date}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                        dispatchTimes({ type: 'UPDATE_TIMES', payload: { date: e.target.value } })
+                        setBookingForm((prev) => ({...prev , date  : e.target.value}))
+                     }}
+
                 />
                 <label htmlFor="res-time">Choose time</label>
-                <select
-                    id="res-time"
-                    name="time"
-                    value={booking?.time}
-                    onChange={handleChange}
-                >
-                    {availableTimes?.map((time) => (
-                        <option key={time} value={time}>
-                            {time}
-                        </option>
-                    ))}
-                </select>
+                {isAvailable ? (
+                    <select
+                        id="res-time"
+                        name="time"
+                        value={booking?.time}
+                        onChange={handleChange}
+                    >
+                        {availableTimes.map((time) => (
+                            <option key={time} value={time}>
+                                {time}
+                            </option>
+                        ))}
+                    </select>
+                ) : (
+                    <p>No available times for the selected date.</p>
+                )}
                 <label htmlFor="guests">Number of guests</label>
                 <input
                     type="number"
